@@ -31,8 +31,8 @@ const addData = async (req, res) => {
 }
 const createExcelsheet = async (req, res) => {
     try {
-      const fileName = "student";
-      const filePath = "./student.xlsx";
+      const fileName = "student"
+      const filePath = "./student_marks.xlsx"
       let workbook = xlsx1.utils.book_new();
       var resp = [{}];
       resp = await Student.findAll({
@@ -40,16 +40,20 @@ const createExcelsheet = async (req, res) => {
           model: Mark,
         },
       });
-        const data = resp.map((user) => {
-        return [user.Name, user.Mark.Marks1,user.Mark.Marks2];
-      });
-  
-      console.log(data);
-      let sheetData = xlsx1.utils.json_to_sheet(data);
-  
-      xlsx1.utils.book_append_sheet(workbook, sheetData, "Sheet 1", fileName);
-  
-      xlsx1.writeFile(workbook, path.resolve(filePath));
+      const data =resp.map((user) =>{
+        return [user.Name,user.Mark.Marks1,user.Mark.Marks2]
+
+      })
+
+      let Headings = [['Name', 'Marks1', 'Marks2']]
+      const workBook = xlsx1.utils.book_new()
+      const ws =xlsx1.utils.json_to_sheet([])
+      xlsx1.utils.sheet_add_aoa(ws, Headings)
+
+      xlsx1.utils.sheet_add_json(ws, data, { origin: 'A2', skipHeader: true })
+      xlsx1.utils.book_append_sheet(workBook, ws,fileName)
+
+      xlsx1.writeFile(workBook,filePath);;
       res.status(203).json({
         status:appConst.status.success,
         response: resp,
@@ -61,15 +65,9 @@ const createExcelsheet = async (req, res) => {
         response:null,
         message:"Failed to inserted the date successfully"
         
-      });
+      })
     }
-  };
-  
-
-
-
-
-
+  }
 
 module.exports = {
   addData,createExcelsheet
