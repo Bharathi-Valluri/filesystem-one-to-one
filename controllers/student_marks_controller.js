@@ -33,7 +33,6 @@ const createExcelsheet = async (req, res) => {
     try {
       const fileName = "student"
       const filePath = "./student_marks.xlsx"
-      let workbook = xlsx1.utils.book_new();
       var resp = [{}];
       resp = await Student.findAll({
         include: {
